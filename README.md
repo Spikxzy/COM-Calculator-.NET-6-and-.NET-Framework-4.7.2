@@ -4,7 +4,7 @@ This repository contains two solutions and an Excel worksheet with macros enable
 
 ## .NET 6 Solution
 
-Just building this solution will create and register the COM component. By using the MIDL compiler with post build events a TLB is created with the usage of an IDL file. It is then also automatically registerd inside the Windows registry. However, for automatic registration to work Visual Studio has to be started as administrator.
+Just building this solution will create and register the COM component. By using the MIDL compiler with post build events a TLB is created with the usage of an IDL file. It is then also automatically registerd inside the Windows registry. However, for automatic registration to work Visual Studio has to be started as administrator. This solution can be built in both x64 and x86 bit since the bit version of the COM component must match the bit version of Excel in order to work properly.
 
 ## .NET Framework Solution
 
