@@ -1,0 +1,75 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>x86;x64</Platforms>
+  </PropertyGroup>
+	<PropertyGroup>
+		<KitsVersion>10.0.19041.0</KitsVersion>
+		<DriveLetter>N:</DriveLetter>
+		<CLPathExec>
+			<![CDATA[
+				"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -prerelease -products * -requires Microsoft.Component.MSBuild -find VC\Tools\MSVC\**\bin\Hostx64\x64 > %temp%\clpath.location
+				set /p CLPath= <"%temp%\clpath.location"
+			]]>
+		</CLPathExec>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<Compile Include="COM/AssemblyInfo.cs" />
+		<Compile Include="Interfaces/ICalculator.cs" />
+		<Compile Include="Interfaces/CalculatorEvents.cs" />
+		<Compile Include="Classes/Calculator.cs" />
+		<None Include="COM/definitions.idl" />
+		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+		<PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.321">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+	
+	<PropertyGroup>
+		<AssemblyName>$(MSBuildProjectName)$(Platform)</AssemblyName>
+		<Description>COM Calculator .NET 6 version</Description>
+		<EnableComHosting>true</EnableComHosting>
+
+		<EnableDefaultItems>false</EnableDefaultItems>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<NETCoreSdkRuntimeIdentifier>win-$(Platform)</NETCoreSdkRuntimeIdentifier>
+		<Platforms>x64;x86</Platforms>
+		<TargetFramework>net6.0-windows7.0</TargetFramework>
+		<PathKitsBin>C:\Program Files (x86)\Windows Kits\10\bin\$(KitsVersion)</PathKitsBin>
+		<PathKitsInclude>C:\Program Files (x86)\Windows Kits\10\include\$(KitsVersion)</PathKitsInclude>
+		<MidlOptions>
+			/cpp_cmd "$(DriveLetter)\cl.exe"
+			/dlldata nul /h nul /iid nul /proxy nul
+			/env $(Platform.Replace("x86", "win32").Replace("x64", "win64"))
+			/I "$(PathKitsInclude)\um\64"
+			/I "$(PathKitsInclude)\um"
+			/I "$(PathKitsInclude)\shared"
+			/out "bin\$(Platform)\$(Configuration)\$(TargetFramework)"
+			/tlb "$(MSBuildProjectName)$(Platform).comhost.tlb"
+			COM\definitions.idl
+		</MidlOptions>
+	</PropertyGroup>
+
+	<Target AfterTargets="PostBuildEvent" Name="PostBuild">
+		<WriteLinesToFile File="$(TargetDir)midloptions.txt" Overwrite="true" Lines="$(MidlOptions)" />
+		
+		<Message Text="Substituting Drive Letter with CL path" Importance="High"/>
+		<Exec IgnoreExitCode="true" Command="$(CLPathExec); subst $(DriveLetter) &quot;%CLPath%&quot;" />
+		
+		<Message Text="Compiling TLB with MIDL" Importance="High"/>
+		<Exec command="&quot;$(PathKitsBin)\x64\midl.exe&quot; @$(TargetDir)midloptions.txt&quot;" />
+		
+		<Message Text="Registering COM component" Importance="High"/>
+		<Exec command="regsvr32 /s &quot;$(TargetDir)$(TargetName).comhost.dll&quot;" />
+	</Target>
+
+	<Target AfterTargets="BeforeClean" BeforeTargets="CoreClean" Name="RegClean">
+		<Exec IgnoreExitCode="true" Command="regsvr32 /s /u &quot;$(TargetDir)$(TargetName).comhost.dll&quot;" />
+	</Target>
+
+</Project>

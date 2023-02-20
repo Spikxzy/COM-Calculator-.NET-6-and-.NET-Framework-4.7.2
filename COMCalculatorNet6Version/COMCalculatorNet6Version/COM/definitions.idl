@@ -1,0 +1,31 @@
+﻿[uuid(B6225162-C6EB-4FDB-B932-35F62A4B6F7B), version(1.0), helpstring("COM Calculator .NET 6 version")]
+library COMCalculatorNET6
+{
+	importlib("STDOLE2.TLB");
+
+	[odl, uuid(954275BE-B766-4AFD-A8FD-18BFC0D1D9B5), dual, oleautomation, nonextensible, helpstring("ICalculator"), object]
+	interface ICalculator : IDispatch
+	{
+		[id(1), helpstring("Addition")]
+		HRESULT Addition([in] double firstValue, [in] double secondValue, [out, retval] double* returnVal);
+
+		[id(2), helpstring("TriggerAdditionEvent")]
+		void TriggerAdditionEvent();
+	};
+
+	[uuid(6C4DEE22-3A22-4C9E-BF7F-720E49196C3E), helpstring("CalculatorEvents")]
+	dispinterface CalculatorEvents
+	{
+		properties:
+		methods:
+			[id(1), helpstring("OnAdditionDone")]
+			void OnAdditionDone();
+	};
+
+	[uuid(32792C02-A345-40BA-BF30-50CABD61155D), helpstring("Calculator")]
+	coclass Calculator
+	{
+		[default] interface ICalculator;
+		[default, source] dispinterface CalculatorEvents;
+	};
+}
