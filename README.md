@@ -12,4 +12,4 @@ Building this solution will result in a .dll file. This file can afterwards be u
 
 ## Calculator Client
  
-The Excel workbook contains a COM client written in VBA. This client has buttons which execute the basic functionality that the calculator supports ('Addition', 'TriggerAdditionEvent').
+The Excel workbook contains a COM client written in VBA. This client has buttons which execute the basic functionality that the calculator supports ('Addition', 'TriggerAdditionEvent'). To enable the COM components in Excel open the VBA developter tab and under 'Tools -> References' select either 'COMCalculatorFrameworkVersion' to use the .NET Framework version of the calculator or 'COM Calculator .NET 6 Version' for the .NET 6 version of the calculator. Do not add both references at the same time since the naming of the COM classes is the same.
