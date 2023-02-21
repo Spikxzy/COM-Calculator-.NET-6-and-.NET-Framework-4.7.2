@@ -4,7 +4,7 @@ This repository contains two solutions and an Excel worksheet with macros enable
 
 ## .NET 6 Solution
 
-Just building this solution will create and register the COM component. By using the MIDL compiler with post build events a TLB is created with the usage of an IDL file. It is then also automatically registerd inside the Windows registry. However, for automatic registration to work Visual Studio has to be started as administrator.
+Just building this solution will create and register the COM component. By using the MIDL compiler with post build events a TLB is created with the usage of an IDL file. It is then also automatically registerd inside the Windows registry. However, for automatic registration to work Visual Studio has to be started as administrator. This solution can be built in both x64 and x86 bit since the bit version of the COM component must match the bit version of Excel in order to work properly.
 
 ## .NET Framework Solution
 
@@ -12,4 +12,4 @@ Building this solution will result in a .dll file. This file can afterwards be u
 
 ## Calculator Client
  
-The Excel workbook contains a COM client written in VBA. This client has buttons which execute the basic functionality that the calculator supports ('Addition', 'TriggerAdditionEvent').
+The Excel workbook contains a COM client written in VBA. This client has buttons which execute the basic functionality that the calculator supports ('Addition', 'TriggerAdditionEvent'). To enable the COM components in Excel open the VBA developter tab and under 'Tools -> References' select either 'COMCalculatorFrameworkVersion' to use the .NET Framework version of the calculator or 'COM Calculator .NET 6 Version' for the .NET 6 version of the calculator. Do not add both references at the same time since the naming of the COM classes is the same.
