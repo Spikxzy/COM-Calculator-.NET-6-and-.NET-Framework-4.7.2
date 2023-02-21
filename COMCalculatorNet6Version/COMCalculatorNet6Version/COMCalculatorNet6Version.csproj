@@ -62,7 +62,7 @@
 		<Exec IgnoreExitCode="true" Command="$(CLPathExec); subst $(DriveLetter) &quot;%CLPath%&quot;" />
 		
 		<Message Text="Compiling TLB with MIDL" Importance="High"/>
-		<Exec command="&quot;$(PathKitsBin)\x64\midl.exe&quot; @$(TargetDir)midloptions.txt&quot;" />
+		<Exec command="&quot;$(PathKitsBin)\x64\midl.exe&quot; &quot;@$(TargetDir)midloptions.txt&quot;" />
 		
 		<Message Text="Registering COM component" Importance="High"/>
 		<Exec command="regsvr32 /s &quot;$(TargetDir)$(TargetName).comhost.dll&quot;" />
