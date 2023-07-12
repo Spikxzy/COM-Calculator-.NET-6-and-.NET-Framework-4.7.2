@@ -365,3 +365,5 @@ FodyWeavers.xsd
 #My Ignores
 COMCalculatorFrameworkVersion/COMCalculatorFrameworkVersion/obj/
 COMCalculatorNet6Version/COMCalculatorNet6Version/obj/
+/COMCalculatorNet6Version/TestingComCalculatorEvents
+*.zip
