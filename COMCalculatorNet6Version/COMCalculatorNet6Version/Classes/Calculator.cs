@@ -1,21 +1,23 @@
-﻿using COMCalculatorNet6Version.COM;
-using COMCalculatorNet6Version.Interfaces;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="Calculator.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace COMCalculatorNet6Version.Classes
 {
+    using System;
+    using System.Reflection;
+    using System.Runtime.InteropServices;
+    using System.Runtime.InteropServices.ComTypes;
+    using System.Threading.Tasks;
+    using COMCalculatorNet6Version.COM;
+    using COMCalculatorNet6Version.Interfaces;
+    using Microsoft.Win32;
+
     [ComVisible(true)]
     [Guid(AssemblyInfo.CalculatorClassGuid)]
     [ClassInterface(ClassInterfaceType.None)]
     [ComSourceInterfaces(typeof(CalculatorEvents))]
-    [ProgId("COM Calculator .NET 6 version")]
+    [ProgId("ComCalculatorTest")]
     public class Calculator : ICalculator
     {
         [ComRegisterFunction]
@@ -85,7 +87,7 @@ namespace COMCalculatorNet6Version.Classes
         [Guid(AssemblyInfo.OnAdditionDoneDelegateGuid)]
         public delegate void OnAdditionDoneDelegate();
 
-        private event OnAdditionDoneDelegate OnAdditionDone;
+        public event OnAdditionDoneDelegate OnAdditionDone;
 
         public double Addition(double firstValue, double secondValue)
         {
@@ -93,6 +95,51 @@ namespace COMCalculatorNet6Version.Classes
             return firstValue + secondValue;
         }
 
-        public void TriggerAdditionEvent() => Task.Run(() => OnAdditionDone?.Invoke());
+        public void TriggerAdditionEvent() => Task.Run(() =>
+        {
+            if (this.OnAdditionDone != null && Marshal.IsComObject(this.OnAdditionDone))
+            {
+                var dispatchedInstance = Marshal.GetIDispatchForObject(this.OnAdditionDone);
+                Guid emptyGuid = Guid.Empty;
+                DISPPARAMS args = new();
+
+                unsafe
+                {
+                    var dispatchInvoke = (delegate* unmanaged[Stdcall]<IntPtr, int, Guid*, short, short, void*, void*, void*, void*, int>)(*(*(void***)dispatchedInstance + 6));
+                    int hr = dispatchInvoke(dispatchedInstance, 1, &emptyGuid, 0, 1, &args, null, null, null);
+                }
+
+                Marshal.Release(dispatchedInstance);
+            }
+            else if (this.OnAdditionDone != null)
+            {
+                this.OnAdditionDone.Invoke();
+            }
+
+            /*foreach (Delegate d in this.OnAdditionDone.GetInvocationList())
+            {
+                Console.WriteLine(d.ToString());
+                if (d.Target != null && Marshal.IsComObject(d.Target))
+                {
+                    Console.WriteLine(d.ToString());
+                    var inst = Marshal.GetIDispatchForObject(d.Target!);
+                    Guid empty = Guid.Empty;
+                    DISPPARAMS args = new();
+
+                    unsafe
+                    {
+                        var dispatchInvoke = (delegate* unmanaged[Stdcall]<IntPtr, int, Guid*, short, short, void*, void*, void*, void*, int>)(*(*(void***)inst + 6));
+                        int hr = dispatchInvoke(inst, 1, &empty, 0, 1, &args, null, null, null);
+                    }
+
+                    Marshal.Release(inst);
+                }
+                else
+                {
+                    d.DynamicInvoke();
+                }
+            }
+            */
+        });
     }
 }

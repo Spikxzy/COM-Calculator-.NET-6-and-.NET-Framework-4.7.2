@@ -28,6 +28,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+		<PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
 	</ItemGroup>
 	
 	<PropertyGroup>
@@ -53,18 +54,19 @@
 			/tlb "$(MSBuildProjectName)$(Platform).comhost.tlb"
 			COM\definitions.idl
 		</MidlOptions>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<Target AfterTargets="PostBuildEvent" Name="PostBuild">
 		<WriteLinesToFile File="$(TargetDir)midloptions.txt" Overwrite="true" Lines="$(MidlOptions)" />
 		
-		<Message Text="Substituting Drive Letter with CL path" Importance="High"/>
+		<Message Text="Substituting Drive Letter with CL path" Importance="High" />
 		<Exec IgnoreExitCode="true" Command="$(CLPathExec); subst $(DriveLetter) &quot;%CLPath%&quot;" />
 		
-		<Message Text="Compiling TLB with MIDL" Importance="High"/>
+		<Message Text="Compiling TLB with MIDL" Importance="High" />
 		<Exec command="&quot;$(PathKitsBin)\x64\midl.exe&quot; &quot;@$(TargetDir)midloptions.txt&quot;" />
 		
-		<Message Text="Registering COM component" Importance="High"/>
+		<Message Text="Registering COM component" Importance="High" />
 		<Exec command="regsvr32 /s &quot;$(TargetDir)$(TargetName).comhost.dll&quot;" />
 	</Target>
 

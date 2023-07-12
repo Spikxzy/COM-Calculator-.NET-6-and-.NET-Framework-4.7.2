@@ -1,13 +1,9 @@
-﻿using COMCalculatorNet6Version.COM;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace COMCalculatorNet6Version.Interfaces
+﻿namespace COMCalculatorNet6Version.Interfaces
 {
+    using System;
+    using System.Runtime.InteropServices;
+    using COMCalculatorNet6Version.Classes;
+    using COMCalculatorNet6Version.COM;
 
     [ComVisible(true)]
     [Guid(AssemblyInfo.CalculatorEventsGuid)]
